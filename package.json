@@ -1,0 +1,24 @@
+{
+  "name": "class-combine",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zetaplus006/class-combine.git"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "author": "zetaplus006",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zetaplus006/class-combine/issues"
+  },
+  "homepage": "https://github.com/zetaplus006/class-combine#readme"
+}
