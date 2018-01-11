@@ -12,7 +12,7 @@ function compose<U>(target: Class<U>): Class<U>;
 function compose (target: Class<any>, ...traits: Class<any>[]): any {
     const classes = [target].concat(traits).reverse();
 
-    const superClass = function Combine (this: any) {
+    const superClass = function ComposeClass (this: any) {
         const arg = arguments;
         skipBabelClassCheck(() => {
             classes.forEach(mixinClass => {
@@ -68,7 +68,7 @@ function mixins (proto: any, baseProto: any) {
 }
 
 function skipBabelClassCheck (fn: () => void) {
-    if (process.env.MIXIN_ENV !== 'babel') {
+    if (process.env.COMPOSE_ENV !== 'babel') {
         fn()
         return
     }

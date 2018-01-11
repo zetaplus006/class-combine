@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function combine(target) {
+function compose(target) {
     var traits = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         traits[_i - 1] = arguments[_i];
     }
     var classes = [target].concat(traits).reverse();
-    var superClass = function Combine() {
+    var superClass = function ComposeClass() {
         var _this = this;
         var arg = arguments;
         skipBabelClassCheck(function () {
@@ -27,7 +27,7 @@ function combine(target) {
     //todo 静态方法    
     return superClass;
 }
-exports.combine = combine;
+exports.compose = compose;
 function applyMixins(superProto, baseCtors) {
     baseCtors.forEach(function (baseCtor) {
         applyProtoMixins(superProto, baseCtor.prototype);
@@ -59,7 +59,7 @@ function mixins(proto, baseProto) {
     }
 }
 function skipBabelClassCheck(fn) {
-    if (process.env.MIXIN_ENV !== 'babel') {
+    if (process.env.COMPOSE_ENV !== 'babel') {
         fn();
         return;
     }
@@ -74,4 +74,4 @@ function skipBabelClassCheck(fn) {
         babelCheck.default = checkFn;
     }
 }
-exports.default = combine;
+exports.default = compose;
