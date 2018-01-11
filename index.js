@@ -9,8 +9,10 @@ function combine(target) {
     var superClass = function Combine() {
         var _this = this;
         var arg = arguments;
-        classes.forEach(function (mixinClass) {
-            mixinClass.apply(_this, arg);
+        skipBabelClassCheck(function () {
+            classes.forEach(function (mixinClass) {
+                mixinClass.apply(_this, arg);
+            });
         });
     };
     superClass.prototype = Object.create(target.prototype, {
@@ -22,6 +24,7 @@ function combine(target) {
         }
     });
     applyMixins(superClass.prototype, classes);
+    //todo 静态方法    
     return superClass;
 }
 exports.combine = combine;
@@ -53,6 +56,22 @@ function mixins(proto, baseProto) {
         if (desc) {
             Object.defineProperty(proto, key, desc);
         }
+    }
+}
+function skipBabelClassCheck(fn) {
+    if (process.env.MIXIN_ENV !== 'babel') {
+        fn();
+        return;
+    }
+    var babelCheck = require('babel-runtime/helpers/classCallCheck.js');
+    var checkFn = babelCheck.default;
+    try {
+        // tslint:disable-next-line:no-empty
+        babelCheck.default = function () { };
+        fn();
+    }
+    finally {
+        babelCheck.default = checkFn;
     }
 }
 exports.default = combine;

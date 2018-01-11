@@ -1,5 +1,5 @@
 {
-  "name": "class-combine",
+  "name": "class-compose",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/zetaplus006/class-combine/issues"
   },
-  "homepage": "https://github.com/zetaplus006/class-combine#readme"
+  "homepage": "https://github.com/zetaplus006/class-combine#readme",
+  "devDependencies": {
+    "@types/node": "^9.3.0",
+    "ava": "^0.24.0"
+  }
 }

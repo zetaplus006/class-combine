@@ -2,20 +2,23 @@ export type Class<T> = {
     new(): T
 }
 
-function combine<U, T1, T2, T3, T4, T5, T6>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>, trait4: Class<T4>, trait5: Class<T5>, trait6: Class<T6>): Class<U & T1 & T2 & T3 & T4 & T5 & T6>;
-function combine<U, T1, T2, T3, T4, T5>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>, trait4: Class<T4>, trait5: Class<T5>): Class<U & T1 & T2 & T3 & T4 & T5>;
-function combine<U, T1, T2, T3, T4>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>, trait4: Class<T4>): Class<U & T1 & T2 & T3 & T4>;
-function combine<U, T1, T2, T3>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>): Class<U & T1 & T2 & T3>;
-function combine<U, T1, T2>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>): Class<U & T1 & T2>;
-function combine<U, T1>(target: Class<U>, trait1: Class<T1>): Class<U & T1>;
-function combine<U>(target: Class<U>): Class<U>;
-function combine (target: Class<any>, ...traits: Class<any>[]): any {
+function compose<U, T1, T2, T3, T4, T5, T6>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>, trait4: Class<T4>, trait5: Class<T5>, trait6: Class<T6>): Class<U & T1 & T2 & T3 & T4 & T5 & T6>;
+function compose<U, T1, T2, T3, T4, T5>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>, trait4: Class<T4>, trait5: Class<T5>): Class<U & T1 & T2 & T3 & T4 & T5>;
+function compose<U, T1, T2, T3, T4>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>, trait4: Class<T4>): Class<U & T1 & T2 & T3 & T4>;
+function compose<U, T1, T2, T3>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>, trait3: Class<T3>): Class<U & T1 & T2 & T3>;
+function compose<U, T1, T2>(target: Class<U>, trait1: Class<T1>, trait2: Class<T2>): Class<U & T1 & T2>;
+function compose<U, T1>(target: Class<U>, trait1: Class<T1>): Class<U & T1>;
+function compose<U>(target: Class<U>): Class<U>;
+function compose (target: Class<any>, ...traits: Class<any>[]): any {
     const classes = [target].concat(traits).reverse();
+
     const superClass = function Combine (this: any) {
         const arg = arguments;
-        classes.forEach(mixinClass => {
-            mixinClass.apply(this, arg);
-        });
+        skipBabelClassCheck(() => {
+            classes.forEach(mixinClass => {
+                mixinClass.apply(this, arg);
+            });
+        })
     };
     superClass.prototype = Object.create(target.prototype, {
         constructor: {
@@ -64,7 +67,23 @@ function mixins (proto: any, baseProto: any) {
     }
 }
 
-export default combine;
+function skipBabelClassCheck (fn: () => void) {
+    if (process.env.MIXIN_ENV !== 'babel') {
+        fn()
+        return
+    }
+    const babelCheck = require('babel-runtime/helpers/classCallCheck.js')
+    const checkFn = babelCheck.default
+    try {
+        // tslint:disable-next-line:no-empty
+        babelCheck.default = function () { }
+        fn()
+    } finally {
+        babelCheck.default = checkFn
+    }
+}
+
+export default compose;
 export {
-    combine
+    compose
 }
