@@ -83,6 +83,7 @@ test((t) => {
         method_A () {
             return 'A'
         }
+        static staticA = true
     }
 
     class B extends A {
@@ -95,13 +96,12 @@ test((t) => {
         method_B () {
             return 'B'
         }
+        static staticB = true
     }
-
 
     class C {
-
+        static staticC = true
     }
-
 
     class S extends compose(C, B) {
 
@@ -123,4 +123,7 @@ test((t) => {
     t.true(obj.method_A() === 'A')
     t.true(obj.method_B() === 'B')
 
+    t.true(S['staticA'])
+    t.true(S['staticB'])
+    t.true(S['staticC'])
 });

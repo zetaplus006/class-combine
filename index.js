@@ -5,14 +5,15 @@ function compose(target) {
     for (var _i = 1; _i < arguments.length; _i++) {
         traits[_i - 1] = arguments[_i];
     }
-    var classes = [target].concat(traits).reverse();
+    var classes = [target].concat(traits);
     var superClass = function ComposeClass() {
         var _this = this;
         var arg = arguments;
         skipBabelClassCheck(function () {
-            classes.forEach(function (mixinClass) {
-                mixinClass.apply(_this, arg);
-            });
+            var len = classes.length;
+            while (len--) {
+                classes[len].apply(_this, arg);
+            }
         });
     };
     superClass.prototype = Object.create(target.prototype, {
@@ -23,25 +24,18 @@ function compose(target) {
             configurable: false
         }
     });
-    applyMixins(superClass.prototype, classes);
-    //todo 静态方法    
+    classes.forEach(function (baseCtor) {
+        applyProtoMixins(superClass.prototype, baseCtor.prototype);
+    });
+    mixinStatic(superClass, classes);
     return superClass;
 }
 exports.compose = compose;
-function applyMixins(superProto, baseCtors) {
-    baseCtors.forEach(function (baseCtor) {
-        applyProtoMixins(superProto, baseCtor.prototype);
-    });
-}
-/* 深度优先 ，子类覆盖父类*/
 function applyProtoMixins(proto, baseProto) {
-    var superProto = Object.getPrototypeOf(baseProto);
-    if (superProto === Object.prototype || superProto === null) {
+    if (baseProto !== Object.prototype && baseProto !== null) {
         mixins(proto, baseProto);
-    }
-    else {
+        var superProto = Object.getPrototypeOf(baseProto);
         applyProtoMixins(proto, superProto);
-        mixins(proto, baseProto);
     }
 }
 function mixins(proto, baseProto) {
@@ -49,7 +43,8 @@ function mixins(proto, baseProto) {
     var len = keys.length, key;
     while (len--) {
         key = keys[len];
-        if (key === 'constructor') {
+        /*子类覆盖父类 ,前面参数的优先级大于后面的，可以视为多重继承*/
+        if (proto.hasOwnProperty(key)) {
             return;
         }
         var desc = Object.getOwnPropertyDescriptor(baseProto, key);
@@ -57,6 +52,15 @@ function mixins(proto, baseProto) {
             Object.defineProperty(proto, key, desc);
         }
     }
+}
+function mixinStatic(target, bases) {
+    bases.forEach(function (base) {
+        for (var key in base) {
+            if (!target.hasOwnProperty(key)) {
+                target[key] = base[key];
+            }
+        }
+    });
 }
 function skipBabelClassCheck(fn) {
     if (process.env.COMPOSE_ENV !== 'babel') {

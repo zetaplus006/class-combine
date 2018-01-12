@@ -95,6 +95,7 @@ ava_1.default(function (t) {
         A.prototype.method_A = function () {
             return 'A';
         };
+        A.staticA = true;
         return A;
     }());
     var B = /** @class */ (function (_super) {
@@ -114,11 +115,13 @@ ava_1.default(function (t) {
         B.prototype.method_B = function () {
             return 'B';
         };
+        B.staticB = true;
         return B;
     }(A));
     var C = /** @class */ (function () {
         function C() {
         }
+        C.staticC = true;
         return C;
     }());
     var S = /** @class */ (function (_super) {
@@ -139,4 +142,7 @@ ava_1.default(function (t) {
     //method
     t.true(obj.method_A() === 'A');
     t.true(obj.method_B() === 'B');
+    t.true(S['staticA']);
+    t.true(S['staticB']);
+    t.true(S['staticC']);
 });
