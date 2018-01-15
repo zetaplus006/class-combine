@@ -1,5 +1,32 @@
 "use strict";
+/*
+ change from  https://github.com/Microsoft/TypeScript/pull/13743#issuecomment-299540915
+*/
 Object.defineProperty(exports, "__esModule", { value: true });
+/* 为了推断 typeof T ，防止tsc报错 */
+function mix(superclass) {
+    if (superclass === void 0) { superclass = /** @class */ (function () {
+        function class_1() {
+        }
+        return class_1;
+    }()); }
+    return new MixinBuilder(superclass);
+}
+exports.mix = mix;
+var MixinBuilder = /** @class */ (function () {
+    function MixinBuilder(superclass) {
+        this.superclass = superclass;
+    }
+    MixinBuilder.prototype.with = function () {
+        var mixins = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            mixins[_i] = arguments[_i];
+        }
+        return compose.apply(void 0, [this.superclass].concat(mixins));
+    };
+    return MixinBuilder;
+}());
+exports.MixinBuilder = MixinBuilder;
 function compose(target) {
     var traits = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -27,18 +54,17 @@ function compose(target) {
     classes.forEach(function (baseCtor) {
         applyProtoMixins(superClass.prototype, baseCtor.prototype);
     });
-    mixinStatic(superClass, classes);
+    mixinsStatic(superClass, classes);
     return superClass;
 }
-exports.compose = compose;
 function applyProtoMixins(proto, baseProto) {
     if (baseProto !== Object.prototype && baseProto !== null) {
-        mixins(proto, baseProto);
+        mixinsToProto(proto, baseProto);
         var superProto = Object.getPrototypeOf(baseProto);
         applyProtoMixins(proto, superProto);
     }
 }
-function mixins(proto, baseProto) {
+function mixinsToProto(proto, baseProto) {
     var keys = Object.getOwnPropertyNames(baseProto);
     var len = keys.length, key;
     while (len--) {
@@ -53,7 +79,7 @@ function mixins(proto, baseProto) {
         }
     }
 }
-function mixinStatic(target, bases) {
+function mixinsStatic(target, bases) {
     bases.forEach(function (base) {
         for (var key in base) {
             if (!target.hasOwnProperty(key)) {
@@ -62,20 +88,24 @@ function mixinStatic(target, bases) {
         }
     });
 }
-function skipBabelClassCheck(fn) {
-    if (process.env.COMPOSE_ENV !== 'babel') {
-        fn();
-        return;
-    }
-    var babelCheck = require('babel-runtime/helpers/classCallCheck.js');
-    var checkFn = babelCheck.default;
-    try {
-        // tslint:disable-next-line:no-empty
-        babelCheck.default = function () { };
-        fn();
-    }
-    finally {
-        babelCheck.default = checkFn;
-    }
-}
-exports.default = compose;
+/**
+ * 跳过babel编译器的instanceof检查
+ * @param fn
+ */
+var skipBabelClassCheck = process.env.COMPOSE_ENV !== 'babel'
+    ?
+        function (fn) { return fn(); }
+    :
+        function (fn) {
+            var babelCheck = require('babel-runtime/helpers/classCallCheck.js');
+            var checkFn = babelCheck.default;
+            try {
+                // tslint:disable-next-line:no-empty
+                babelCheck.default = function () { };
+                return fn();
+            }
+            finally {
+                babelCheck.default = checkFn;
+            }
+        };
+exports.default = mix;

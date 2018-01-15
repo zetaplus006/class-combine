@@ -1,5 +1,5 @@
 import test from 'ava'
-import compose from '../index'
+import mix from '../index'
 
 test((t) => {
 
@@ -39,7 +39,7 @@ test((t) => {
         }
     }
 
-    const S = compose(A, B, C)
+    const S = mix(A).with(B, C)
 
     const obj = new S();
 
@@ -103,7 +103,7 @@ test((t) => {
         static staticC = true
     }
 
-    class S extends compose(C, B) {
+    class S extends mix(C).with(B) {
 
     }
 
@@ -123,7 +123,7 @@ test((t) => {
     t.true(obj.method_A() === 'A')
     t.true(obj.method_B() === 'B')
 
-    t.true(S['staticA'])
-    t.true(S['staticB'])
-    t.true(S['staticC'])
+    t.true(S.staticA)
+    t.true(S.staticB)
+    t.true(S.staticC)
 });

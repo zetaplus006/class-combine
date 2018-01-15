@@ -61,7 +61,7 @@ ava_1.default(function (t) {
         };
         return C;
     }());
-    var S = index_1.default(A, B, C);
+    var S = index_1.default(A).with(B, C);
     var obj = new S();
     t.true(obj instanceof A);
     t.false(obj instanceof B);
@@ -130,7 +130,7 @@ ava_1.default(function (t) {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         return S;
-    }(index_1.default(C, B)));
+    }(index_1.default(C).with(B)));
     var obj = new S();
     t.true(obj instanceof C);
     t.false(obj instanceof B);
@@ -142,7 +142,7 @@ ava_1.default(function (t) {
     //method
     t.true(obj.method_A() === 'A');
     t.true(obj.method_B() === 'B');
-    t.true(S['staticA']);
-    t.true(S['staticB']);
-    t.true(S['staticC']);
+    t.true(S.staticA);
+    t.true(S.staticB);
+    t.true(S.staticC);
 });
