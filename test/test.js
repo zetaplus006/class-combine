@@ -27,6 +27,7 @@ ava_1.default(function (t) {
         A.prototype.method_A = function () {
             return 'A';
         };
+        A.a = 'a';
         return A;
     }());
     var B = /** @class */ (function () {
@@ -43,6 +44,7 @@ ava_1.default(function (t) {
         B.prototype.method_B = function () {
             return 'B';
         };
+        B.b = 'b';
         return B;
     }());
     var C = /** @class */ (function () {
@@ -59,9 +61,16 @@ ava_1.default(function (t) {
         C.prototype.method_C = function () {
             return 'C';
         };
+        C.c = 'c';
         return C;
     }());
-    var S = index_1.default(A).with(B, C);
+    var S = /** @class */ (function (_super) {
+        __extends(S, _super);
+        function S() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return S;
+    }(index_1.default(A).with(B, C)));
     var obj = new S();
     t.true(obj instanceof A);
     t.false(obj instanceof B);
@@ -78,6 +87,10 @@ ava_1.default(function (t) {
     t.true(obj.method_A() === 'A');
     t.true(obj.method_B() === 'B');
     t.true(obj.method_C() === 'C');
+    //static
+    t.true(S.a === 'a');
+    t.true(S.b === 'b');
+    t.true(S.c === 'c');
 });
 ava_1.default(function (t) {
     var A = /** @class */ (function () {

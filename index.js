@@ -59,17 +59,17 @@ function compose(target) {
 }
 function applyProtoMixins(proto, baseProto) {
     if (baseProto !== Object.prototype && baseProto !== null) {
-        mixinsToProto(proto, baseProto);
+        mixinsProto(proto, baseProto);
         var superProto = Object.getPrototypeOf(baseProto);
         applyProtoMixins(proto, superProto);
     }
 }
-function mixinsToProto(proto, baseProto) {
+function mixinsProto(proto, baseProto) {
     var keys = Object.getOwnPropertyNames(baseProto);
     var len = keys.length, key;
     while (len--) {
         key = keys[len];
-        /*子类覆盖父类 ,前面参数的优先级大于后面的，可以视为多重继承*/
+        /*前面参数的优先级大于后面的*/
         if (proto.hasOwnProperty(key)) {
             return;
         }
@@ -92,7 +92,7 @@ function mixinsStatic(target, bases) {
  * 跳过babel编译器的instanceof检查
  * @param fn
  */
-var skipBabelClassCheck = process.env.COMPOSE_ENV !== 'babel'
+var skipBabelClassCheck = process.env.MIX_ENV !== 'babel'
     ?
         function (fn) { return fn(); }
     :

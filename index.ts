@@ -32,7 +32,6 @@ export class MixinBuilder<T, U> {
         return compose(this.superclass, ...mixins)
     }
 }
-
 type IClass<T> = {
     new(...arg: any[]): T
     /* 找不到方法推断静态成员 */
@@ -82,18 +81,18 @@ function compose (target: IClass<any>, ...traits: IClass<any>[]): any {
 
 function applyProtoMixins (proto: any, baseProto: IClass<any>) {
     if (baseProto !== Object.prototype && baseProto !== null) {
-        mixinsToProto(proto, baseProto);
+        mixinsProto(proto, baseProto);
         const superProto = Object.getPrototypeOf(baseProto);
         applyProtoMixins(proto, superProto);
     }
 }
 
-function mixinsToProto (proto: Object, baseProto: any) {
+function mixinsProto (proto: Object, baseProto: any) {
     const keys = Object.getOwnPropertyNames(baseProto);
     let len = keys.length, key;
     while (len--) {
         key = keys[len];
-        /*子类覆盖父类 ,前面参数的优先级大于后面的，可以视为多重继承*/
+        /*前面参数的优先级大于后面的*/
         if (proto.hasOwnProperty(key)) {
             return;
         }
@@ -118,7 +117,7 @@ function mixinsStatic (target: any, bases: IClass<any>[]) {
  * 跳过babel编译器的instanceof检查
  * @param fn 
  */
-const skipBabelClassCheck = process.env.COMPOSE_ENV !== 'babel'
+const skipBabelClassCheck = process.env.MIX_ENV !== 'babel'
     ?
     (fn: () => void) => fn()
     :

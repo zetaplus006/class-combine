@@ -1,8 +1,8 @@
-import test from 'ava'
-import mix from '../index'
+# 类型混合
 
-test((t) => {
+change from  https://github.com/Microsoft/TypeScript/pull/13743#issuecomment-299540915
 
+```typescript
     class A {
         text = 'A'
 
@@ -45,6 +45,7 @@ test((t) => {
         static c = 'c'
     }
 
+    // B和C可以视为java中带有默认实现的接口
     class S extends mix(A).with(B, C) {
 
     }
@@ -74,69 +75,4 @@ test((t) => {
     t.true(S.a === 'a')
     t.true(S.b === 'b')
     t.true(S.c === 'c')
-
-});
-
-
-test((t) => {
-
-    class A {
-        text = 'A'
-
-        A = 'A'
-
-        constructor () {
-
-        }
-
-        get getter () {
-            return 'A'
-        }
-
-        method_A () {
-            return 'A'
-        }
-        static staticA = true
-    }
-
-    class B extends A {
-        text = 'B'
-
-        get getter () {
-            return 'B'
-        }
-
-        method_B () {
-            return 'B'
-        }
-        static staticB = true
-    }
-
-    class C {
-        static staticC = true
-    }
-
-    class S extends mix(C).with(B) {
-
-    }
-
-    const obj = new S();
-
-    t.true(obj instanceof C)
-    t.false(obj instanceof B)
-
-    //property
-    t.true(obj.text === 'B')
-    t.true(obj.A === 'A')
-
-    //getter
-    t.true(obj.getter === 'B')
-
-    //method
-    t.true(obj.method_A() === 'A')
-    t.true(obj.method_B() === 'B')
-
-    t.true(S.staticA)
-    t.true(S.staticB)
-    t.true(S.staticC)
-});
+```
