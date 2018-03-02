@@ -70,12 +70,11 @@ function mixinsProto(proto, baseProto) {
     while (len--) {
         key = keys[len];
         /*前面参数的优先级大于后面的*/
-        if (proto.hasOwnProperty(key)) {
-            return;
-        }
-        var desc = Object.getOwnPropertyDescriptor(baseProto, key);
-        if (desc) {
-            Object.defineProperty(proto, key, desc);
+        if (!proto.hasOwnProperty(key)) {
+            var desc = Object.getOwnPropertyDescriptor(baseProto, key);
+            if (desc) {
+                Object.defineProperty(proto, key, desc);
+            }
         }
     }
 }

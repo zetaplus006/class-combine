@@ -14,7 +14,7 @@ export function mix<T, U>(superclass: U & Constructor<T> = class { } as U & Cons
 
 export class MixinBuilder<T, U> {
     private superclass: U & Constructor<T>
-    constructor (superclass: U & Constructor<T>) {
+    constructor(superclass: U & Constructor<T>) {
         this.superclass = superclass
     }
 
@@ -28,7 +28,7 @@ export class MixinBuilder<T, U> {
         : U & P1 & P2 & Constructor<T & C1 & C2>
     with<P1, C1>(m1: Class<P1, C1>)
         : U & P1 & Constructor<T & C1>
-    with (...mixins: any[]): any {
+    with(...mixins: any[]): any {
         return compose(this.superclass, ...mixins)
     }
 }
@@ -48,10 +48,10 @@ function compose<U, T1, T2, T3>(target: IClass<U>, trait1: IClass<T1>, trait2: I
 function compose<U, T1, T2>(target: IClass<U>, trait1: IClass<T1>, trait2: IClass<T2>): IClass<U & T1 & T2>;
 function compose<U, T1>(target: IClass<U>, trait1: IClass<T1>): IClass<U & T1>;
 function compose<U>(target: IClass<U>): IClass<U>;
-function compose (target: IClass<any>, ...traits: IClass<any>[]): any {
+function compose(target: IClass<any>, ...traits: IClass<any>[]): any {
     const classes = [target].concat(traits);
 
-    const superClass = function ComposeClass (this: any) {
+    const superClass = function ComposeClass(this: any) {
         const arg = arguments;
         skipBabelClassCheck(() => {
             let len = classes.length;
@@ -79,7 +79,7 @@ function compose (target: IClass<any>, ...traits: IClass<any>[]): any {
     return superClass;
 }
 
-function applyProtoMixins (proto: any, baseProto: IClass<any>) {
+function applyProtoMixins(proto: any, baseProto: IClass<any>) {
     if (baseProto !== Object.prototype && baseProto !== null) {
         mixinsProto(proto, baseProto);
         const superProto = Object.getPrototypeOf(baseProto);
@@ -87,23 +87,23 @@ function applyProtoMixins (proto: any, baseProto: IClass<any>) {
     }
 }
 
-function mixinsProto (proto: Object, baseProto: any) {
+function mixinsProto(proto: Object, baseProto: any) {
     const keys = Object.getOwnPropertyNames(baseProto);
     let len = keys.length, key;
     while (len--) {
         key = keys[len];
         /*前面参数的优先级大于后面的*/
-        if (proto.hasOwnProperty(key)) {
-            return;
+        if (!proto.hasOwnProperty(key)) {
+            const desc = Object.getOwnPropertyDescriptor(baseProto, key);
+            if (desc) {
+                Object.defineProperty(proto, key, desc);
+            }
         }
-        const desc = Object.getOwnPropertyDescriptor(baseProto, key);
-        if (desc) {
-            Object.defineProperty(proto, key, desc);
-        }
+
     }
 }
 
-function mixinsStatic (target: any, bases: IClass<any>[]) {
+function mixinsStatic(target: any, bases: IClass<any>[]) {
     bases.forEach(base => {
         for (const key in base) {
             if (!target.hasOwnProperty(key)) {
