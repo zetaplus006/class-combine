@@ -29,7 +29,7 @@ export class MixinBuilder<T, U> {
     with<P1, C1>(m1: Class<P1, C1>)
         : U & P1 & Constructor<T & C1>
     with(...mixins: any[]): any {
-        return compose(this.superclass, ...mixins)
+        return (compose as any)(this.superclass, ...mixins)
     }
 }
 type IClass<T> = {
