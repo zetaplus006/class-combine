@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zetaplus006/class-combine.git"
+    "url": "git+https://github.com/zetaplus006/class-mix.git"
   },
   "keywords": [
     "typescript"
@@ -24,9 +24,9 @@
   "author": "zetaplus006",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zetaplus006/class-combine/issues"
+    "url": "https://github.com/zetaplus006/class-mix/issues"
   },
-  "homepage": "https://github.com/zetaplus006/class-combine#readme",
+  "homepage": "https://github.com/zetaplus006/class-mix#readme",
   "devDependencies": {
     "@types/node": "^9.3.0",
     "ava": "^0.24.0",
